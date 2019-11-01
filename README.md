@@ -1,5 +1,14 @@
 # Score-Weighted Class Activation Mapping (SCAM-NET)
 
+## Setup
+
+    git clone git clone https://github.com/andreysorokin/scam-net.git
+    python setup.py install
+    
+or    
+    
+    pip install scam-net-rewintous
+
 ## About
 This is an implementation of: <cite data-cite="wang2019scorecamimproved">Score-CAM Improved Visual Explanations Via Score-Weighted Class Activation Mapping</cite>.
 [https://arxiv.org/abs/1910.01279]

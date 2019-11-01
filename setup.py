@@ -1,7 +1,8 @@
-from distutils.core import setup
+from setuptools import setup
+
 setup(
-  name = 'scam-net',
-  packages = ['scam-net'],
+  name = 'scam-net-rewintous',
+  packages = ['scam'],
   version = '0.0.1',
   license='	apache-2.0',
   description = 'Score Weighted Class Activation Mapping. A tool for convolutional neural network activation analysis',

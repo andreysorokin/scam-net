@@ -6,7 +6,15 @@ from scam.utils import resize_activations, normalize_activations
 
 
 class ScoreCAM:
-    def __init__(self, model_input, last_conv_output, softmax_output, input_shape, cam_batch_size=-1):
+    def __init__(self, model_input, last_conv_output, softmax_output, input_shape, cam_batch_size=None):
+        """
+        Prepares class activation mappings
+        :param model_input: input layer of CNN, normally takes batch of images as an input. Currently batch must be limited to a single image
+        :param last_conv_output: last convolutional layer. The last conv layer contains the most complete information about image.
+        :param softmax_output: flat softmax (or similar) layer describing the class certainty
+        :param input_shape: Expecting a batch of a single input sample 1 x M X N X ...; it is assumed that 2D image of M x N dimensions is served as an input, which can be multiplied with a 2D-mask.
+        :param cam_batch_size: Optional, defaults to None, which will result in inference of batches of size 32.
+        """
         self.model_input = model_input
         self.last_conv_output = last_conv_output
         self.softmax_output = softmax_output
@@ -25,13 +33,13 @@ class ScoreCAM:
         # filter_size x input_shape[0] x input_shape[1] - resized to original input dimensions
         normalized_maps = normalize_activations(resized)
 
-        # todo add batch support
         # repeat input
         repeat_input = np.tile(input, (normalized_maps.shape[0], 1, 1, 1))
         expanded_activation_maps = np.expand_dims(normalized_maps, axis=3)
         masked_images = np.multiply(repeat_input, expanded_activation_maps)
         # input: filter_size x input_shape[0] x input_shape[1] -> Output filter_size x Classes_Count
-        self.classes_activation_scale = self.softmax_model.predict(masked_images)
+        self.classes_activation_scale = self.softmax_model.predict(masked_images,
+                                                                   batch_size=self.cam_batch_size)
         self.normalized_maps = normalized_maps
 
     def get_class_heatmap(self, class_id):
